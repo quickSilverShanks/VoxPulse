@@ -1,0 +1,60 @@
+voxpulse/
+│
+├── README.md
+├── requirements.txt
+├── Makefile
+├── .pre-commit-config.yaml
+├── .gitignore
+├── LICENSE
+│
+├── data/                    # Raw and processed data
+│   ├── raw/
+│   ├── processed/
+│   └── external/
+│
+├── notebooks/               # Jupyter notebooks for EDA, preprocessing, baseline, etc.
+│   ├── 01_eda.ipynb
+│   ├── 02_preprocessing.ipynb
+│   ├── 03_baseline_model.ipynb
+│   └── ...
+│
+├── src/                     # Core source code for VoxPulse
+│   ├── __init__.py
+│   ├── config/              # Config files and utilities
+│   ├── data/                # Data loading, transformation, scraping
+│   ├── features/            # Feature engineering modules
+│   ├── models/              # Training, inference, evaluation
+│   ├── pipelines/           # Prefect/Airflow pipelines
+│   ├── monitoring/          # Integration with Evidently/Grafana
+│   ├── scoring/             # Helpfulness scoring logic
+│   └── utils/               # General utilities
+│
+├── scripts/                 # CLI scripts for automation and orchestration
+│   ├── train.py
+│   ├── predict.py
+│   ├── monitor.py
+│   └── scrape_reviews.py
+│
+├── tests/                   # Unit and integration tests
+│   ├── __init__.py
+│   ├── test_models.py
+│   ├── test_scoring.py
+│   └── test_scraping.py
+│
+├── deployment/              # Deployment configs
+│   ├── docker/
+│   │   ├── Dockerfile
+│   │   └── docker-compose.yml
+│   ├── localstack/          # Mock cloud services for local deployment
+│   └── api/                 # FastAPI/Flask or similar endpoints
+│
+├── mlflow/                  # MLflow tracking, model registry
+│   └── experiments/
+│
+├── docs/                    # Product documentation and user guides
+│   ├── index.md
+│   └── usage.md
+│
+├── .github/                 # GitHub Actions workflows
+│   └── workflows/
+│       └── ci-cd.yml
