@@ -76,11 +76,35 @@ The above methodology helps us create a more reliable target for training regres
 
 
 
+## Modeling Methodologies - Predicting Usefulness Score
+
+The usefulness score defined above ranges between 0 and 1, reflecting the adjusted helpfulness of a review. Below are four possible modeling approaches we have experimented with to predict this score, each with its own working principle, benefits, and trade-offs.
+
+| **Methodology** | **How it Works** | **Pros** | **Cons** |
+| --------------- | ---------------- | -------- | -------- |
+| **1. Regression with Clipping** <br> *(optionally with custom loss)* | Train a standard regression model to predict raw scores; clip outputs to \[0, 1] range. Optionally, define a custom loss to penalize errors more heavily if predictions are out-of-bounds. | - Simple to implement<br>- Works with any regression algorithm<br>- Can adapt to custom evaluation priorities | - Ignores bounded nature during training<br>- Predictions before clipping may be unrealistic |
+| **2. Regression with logit(y)**                                      | Transform target `y` using logit: `log(y / (1 - y))`; train a regression model on transformed data; apply inverse logit at inference.                                                        | - Respects \[0, 1] bounds after transformation<br>- Handles skewed target distributions better                | - Fails if y = 0 or y = 1 exactly (requires smoothing)<br>- Transformation adds complexity   |
+| **3. Beta Regression**                                               | Model target as a Beta-distributed variable parameterized by mean and precision; directly predicts bounded continuous values.                                                                | - Naturally handles (0, 1) range<br>- Good for skewed or U-shaped distributions<br>- Statistically grounded   | - More complex to implement<br>- Cannot handle exact 0 or 1 without adjustments              |
+| **4. Classification with Buckets**                                   | Discretize the \[0, 1] range into 2+ buckets (zones); train a multiclass classifier to predict the correct zone.                                                                             | - Turns regression into simpler classification<br>- Can focus on critical ranges (e.g., high usefulness)      | - Loses granularity within each bucket<br>- Requires careful choice of bucket boundaries     |
+
+The custom loss function proposed in method 1 can be calculate as follows:
+
+$$
+L_{\text{reg}} = (y_{\text{pred}} - y_{\text{true}})^2
+$$
+
+$$
+L_{\text{penalty}} = \lambda \cdot \max(0, y_{\text{pred}} - 1)^2 + \lambda \cdot \max(0, 0 - y_{\text{pred}})^2
+$$
+
+
+
 ## 🧠 Workflow
 
 <details>
   <summary><b>TODO List</b></summary>
 
+- [ ] Planning: Data | Target | Modeling Methodology
 - [ ] Notebook: Data Profiling(EDA) | Preliminary Analysis
 - [ ] Notebook: Data Preprocessing | Baseline Predictions (Optuna)
 - [ ] FastAPI: API endpoint
@@ -126,6 +150,7 @@ The above methodology helps us create a more reliable target for training regres
 ### Useful Links
 - https://github.com/DataTalksClub/mlops-zoomcamp
 - https://github.com/yokalyan/mlops-churn
+- https://github.com/AnnaGanisheva/churn-prediction
 - https://www.reddit.com/r/explainlikeimfive/comments/ptvrh/eli5_imdbs_top_250_scoring_system_aka_a_true/
 
 
@@ -136,7 +161,7 @@ The above methodology helps us create a more reliable target for training regres
 
 
 <div align="center">
-If you like this project, please consider giving it a ⭐️ **star** to help others discover it. 
+If you like this project, please consider giving it a ⭐️ <b>star</b> to help others discover it. 
 
 [![GitHub Stars](https://img.shields.io/github/stars/quickSilverShanks/VoxPulse.svg?style=social)](https://github.com/quickSilverShanks/VoxPulse/stargazers)
 [![GitHub Forks](https://img.shields.io/github/forks/quickSilverShanks/VoxPulse.svg?style=social)](https://github.com/quickSilverShanks/VoxPulse/network/members)
